@@ -1,19 +1,20 @@
 // src/models/userModel.js
-const { MongoClient } = require("mongodb");
+const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config({ path: ".env.local" });
+
+//因無法直接提出put、patch、delete請求，需下載method-override
+const methodOverride = require("method-override");
 
 const url = process.env.MONGODB_URI;
 
 let db;
 
 async function connectToMongoDB() {
-  const client = new MongoClient(url);
-  console.log("資料庫連接中...");
   try {
-    await client.connect();
-    console.log("成功連接到 MongoDB");
-    db = client.db("mongo");
+    await mongoose.connect(url, { dbName: "pet-zone" }).then(() => {
+      console.log("成功連結資料庫...");
+    });
     // 處理後續邏輯，例如設置模型等
   } catch (error) {
     console.error("連接到 MongoDB 失敗:", error);
@@ -22,8 +23,4 @@ async function connectToMongoDB() {
   }
 }
 
-function getUsers(collection) {
-  return db.collection(collection).find({}).toArray();
-}
-
-module.exports = { connectToMongoDB, getUsers };
+module.exports = { connectToMongoDB };
