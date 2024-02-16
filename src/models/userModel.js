@@ -3,9 +3,6 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config({ path: ".env.local" });
 
-//因無法直接提出put、patch、delete請求，需下載method-override
-const methodOverride = require("method-override");
-
 const url = process.env.MONGODB_URI;
 
 let db;

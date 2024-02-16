@@ -1,14 +1,4 @@
-const userModel = require("../models/userModel2");
 const Member = require("../models/member");
-
-async function getUserData(req, res) {
-  try {
-    const data = await userModel.getUsers("test");
-    res.json(data);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-}
 
 //測試寫入
 async function userSingUp(req, res) {
@@ -32,4 +22,4 @@ async function userSingUp(req, res) {
   }
 }
 
-module.exports = { getUserData, userSingUp };
+module.exports = { userSingUp };

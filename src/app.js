@@ -9,7 +9,7 @@ userModel.connectToMongoDB();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/api", userRoutes);
+app.use("/", userRoutes);
 
 app.listen(port, () => {
   console.log(`listening at http://localhost:${port}`);
