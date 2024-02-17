@@ -1,40 +1,114 @@
 const Product = require("../models/product");
 
 async function addProduct(req, res) {
+  console.log(req.body);
+  let product = req.body;
   try {
-    console.log(req.body);
-    let product = req.body;
-    let productExist = await Product.findOne({ name: product.name }).exec();
+    const productExist = await Product.findOne({ name: product.name }).exec();
 
     if (!productExist) {
-      let newProduct = new Product({
-        ...product,
-      });
-      console.log(newProduct);
+      const newProductData = { ...product, createAt: new Date().getTime() };
+      console.log(newProductData);
+      const newProduct = new Product({ ...newProductData });
+
       await newProduct.save();
-      return res.send("add_product_sucess!");
+      return res.send({
+        success: true,
+        message: "新增產品成功",
+      });
     } else {
-      return res.send("add_product_wrong!");
+      return res.send({
+        success: false,
+        message: "該產品已存在",
+      });
     }
   } catch (err) {
-    return res.status(400).send(err);
+    return res.status(400).send({
+      success: false,
+      message: err.message,
+    });
   }
 }
 
 async function deleteProduct(req, res) {
+  console.log(req.params);
+  const { productId } = req.params;
   try {
-    console.log(req.params);
-    let { productId } = req.params;
-    let deleteProduct = await Product.deleteOne({ _id: productId }).exec();
+    const productExist = await Product.findOne({ _id: productId }).exec();
 
-    if (deleteProduct) {
-      return res.send("delete_product_sucess!");
+    if (productExist) {
+      try {
+        await Product.deleteOne({ _id: productId }).exec();
+        return res.send({
+          success: true,
+          message: "已刪除該產品",
+        });
+      } catch (err) {
+        return res.status(400).send({
+          success: false,
+          message: err.message,
+        });
+      }
     } else {
-      return res.send("delete_product_wrong!");
+      return res.send({
+        success: false,
+        message: "該產品不存在",
+      });
     }
   } catch (err) {
-    return res.status(400).send(err);
+    return res.status(400).send({
+      success: false,
+      message: err.message,
+    });
   }
 }
 
-module.exports = { addProduct, deleteProduct };
+async function updateProduct(req, res) {
+  console.log(req.params, req.body);
+  const { productId } = req.params;
+  const product = req.body;
+  try {
+    const productExist = await Product.findOne({ _id: productId }).exec();
+
+    if (productExist) {
+      let updateProduct = await Product.findOneAndUpdate(
+        {
+          _id: productId,
+        },
+        {
+          ...product,
+          updateAt: new Date().getTime(),
+        }
+      ).exec();
+      await updateProduct.save();
+      return res.send({
+        success: true,
+        message: "已更新產品",
+      });
+    } else {
+      return res.send({
+        success: false,
+        message: "該產品不存在",
+      });
+    }
+  } catch (err) {
+    return res.status(400).send({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
+async function getProducts(req, res) {
+  try {
+    const Allproduct = await Product.find({}).exec();
+    return res.send({ success: true, products: Allproduct });
+  } catch (err) {
+    return res.status(400).send({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
+module.exports = { addProduct, deleteProduct, updateProduct, getProducts };
