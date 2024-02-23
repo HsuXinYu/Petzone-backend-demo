@@ -111,4 +111,26 @@ async function getProducts(req, res) {
   }
 }
 
-module.exports = { addProduct, deleteProduct, updateProduct, getProducts };
+async function getProduct(req, res) {
+  try {
+    console.log(req.params);
+    const { productId } = req.params;
+    const product = await Product.find({
+      _id: productId,
+    }).exec();
+    return res.send({ success: true, product: product[0] });
+  } catch (err) {
+    return res.status(400).send({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
+module.exports = {
+  addProduct,
+  deleteProduct,
+  updateProduct,
+  getProducts,
+  getProduct,
+};
