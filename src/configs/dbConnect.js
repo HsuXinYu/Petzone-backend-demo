@@ -1,11 +1,8 @@
-// src/models/userModel.js
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config({ path: ".env.local" });
 
 const url = process.env.MONGODB_URI;
-
-let db;
 
 async function connectToMongoDB() {
   try {
